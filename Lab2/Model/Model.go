@@ -1,72 +1,61 @@
 package Lab2
 
 import (
-	Model2 "Model/Model"
+	"Model/Model/Interfaces"
 	"fmt"
 	"math"
 )
 
 type Model struct {
-	list  []Model2.IElement
-	tnext float64
-	tcurr float64
-	event int
+	list        []Interfaces.IProcess
+	currentTime float64
+	event       int
 }
 
-func NewModel(elements []Model2.IElement) *Model {
+func NewModel(elements []Interfaces.IProcess) *Model {
 	return &Model{
-		list:  elements,
-		tnext: 0.0,
-		tcurr: 0.0,
-		event: 0,
+		list:        elements,
+		currentTime: 0.0,
+		event:       0,
 	}
 }
 
 func (m *Model) Simulate(time float64) {
-	for m.tcurr < time {
-		m.tnext = math.MaxFloat64
+	for m.currentTime < time {
+		nextTime := math.MaxFloat64
 		for _, e := range m.list {
-			if e.GetTNext() < m.tnext {
-				m.tnext = e.GetTNext()
+			if e.GetNextTime() < nextTime {
+				nextTime = e.GetNextTime()
 				m.event = e.GetId()
 			}
 		}
 
-		for _, e := range m.list {
-			e.DoStatistic(m.tnext - m.tcurr)
-		}
-
-		m.tcurr = m.tnext
-
-		fmt.Printf("*********************************************\nCurrent Model time = %f\n-------------------\n", m.tcurr)
+		m.currentTime = nextTime
 
 		for _, e := range m.list {
-			e.SetTCurr(m.tcurr)
+			e.SetCurrentTime(m.currentTime)
 		}
 
-		m.list[m.event].OutAct()
+		fmt.Printf("*********************************************\nCurrent Model time = %f\n-------------------\n", m.currentTime)
+
 		for _, e := range m.list {
-			if e.GetTNext() == m.tcurr {
-				e.OutAct()
-			}
+			e.MoveToCurrentTime()
 		}
-		m.PrintInfo()
+		m.PrintLog()
 	}
 	m.PrintResult()
 }
 
-func (m *Model) PrintInfo() {
+func (m *Model) PrintLog() {
 	for _, e := range m.list {
-		e.PrintInfo()
+		fmt.Println(e.GetLog())
 	}
 }
 
 func (m *Model) PrintResult() {
-	fmt.Println("Result:")
+	log := ""
 	for _, e := range m.list {
-		e.PrintResult()
-		if p, ok := e.(*Model2.Process); ok {
-			fmt.Printf(" mean length of queue = %f\n failure probability = %f\n---------------------------------------------\n", p.GetMeanQueue()/m.tcurr, float64(p.GetFailure())/float64(p.GetFailure()+p.GetQuantity()))
-		}
+		log += e.GetResult() + "\n"
 	}
+	fmt.Println(log)
 }

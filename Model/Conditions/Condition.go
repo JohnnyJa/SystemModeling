@@ -1,8 +1,8 @@
-package Model
+package Conditions
 
 import (
+	"Model/Model/Elements"
 	"errors"
-	"math"
 	"math/rand"
 )
 
@@ -55,26 +55,26 @@ func (r *RandomCondition) MakeCondition() int {
 }
 
 type PriorityCondition struct {
-	element IElement
+	element Elements.IElement
 }
 
-func NewPriorityCondition(element IElement, queueSizeToSkip int) *PriorityCondition {
+func NewPriorityCondition(element Elements.IElement, queueSizeToSkip int) *PriorityCondition {
 	return &PriorityCondition{element: element}
 }
 
-func (p *PriorityCondition) MakeCondition() int {
-	elements := p.element.GetNextElements()
-	minQueueIndex := 0
-	minQueue := math.MaxInt
-	for i, el := range elements {
-		if s, ok := el.(*Process); ok {
-			if s.GetQueueSize() < minQueue {
-				minQueue = s.GetQueueSize()
-				minQueueIndex = i
-			}
-		} else {
-			panic("element is not a process")
-		}
-	}
-	return minQueueIndex
-}
+//func (p *PriorityCondition) MakeCondition() int {
+//	elements := p.element.GetNextElements()
+//	minQueueIndex := 0
+//	minQueue := math.MaxInt
+//	for i, el := range elements {
+//		if s, ok := el.(*Process); ok {
+//			if s.GetQueueSize() < minQueue {
+//				minQueue = s.GetQueueSize()
+//				minQueueIndex = i
+//			}
+//		} else {
+//			panic("element is not a process")
+//		}
+//	}
+//	return minQueueIndex
+//}

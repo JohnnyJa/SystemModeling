@@ -2,18 +2,19 @@ package Lab3
 
 import (
 	Model2 "Model/Model"
+	"Model/Model/Interfaces"
 	"fmt"
 	"math"
 )
 
 type Model struct {
-	list  []Model2.IElement
+	list  []Interfaces.IProcess
 	tnext float64
 	tcurr float64
 	event int
 }
 
-func NewModel(elements []Model2.IElement) *Model {
+func NewModel(elements []Interfaces.IProcess) *Model {
 	return &Model{
 		list:  elements,
 		tnext: 0.0,
