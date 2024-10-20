@@ -58,7 +58,7 @@ type PriorityCondition struct {
 	element Elements.IElement
 }
 
-func NewPriorityCondition(element Elements.IElement, queueSizeToSkip int) *PriorityCondition {
+func NewPriorityCondition(element Elements.IElement) *PriorityCondition {
 	return &PriorityCondition{element: element}
 }
 
