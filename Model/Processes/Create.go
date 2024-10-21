@@ -7,11 +7,11 @@ import (
 )
 
 type CreateStatistic struct {
-	created int
+	Created int
 }
 
 func (c *CreateStatistic) GetLog() string {
-	return fmt.Sprintf("Created: %d", c.created)
+	return fmt.Sprintf("Created: %d", c.Created)
 
 }
 
@@ -19,23 +19,21 @@ type Create struct {
 	BaseElement
 	CreateStatistic
 
-	delay      float64
 	transition *Transitions.Transition
 
-	markerGenerator func() *Marker.Marker
+	markerGenerator func(float64) *Marker.Marker
 }
 
-func NewCreate(id int, name string, delay float64) *Create {
+func NewCreate(id int, name string) *Create {
 	return &Create{
 		BaseElement: BaseElement{
-			id,
-			name,
-			0,
-			0,
+			Id:                 id,
+			Name:               name,
+			currentTime:        0,
+			nextActivationTime: 0,
 		},
-		delay: delay,
-		markerGenerator: func() *Marker.Marker {
-			return Marker.NewMarker()
+		markerGenerator: func(time float64) *Marker.Marker {
+			return Marker.NewMarker(time)
 		},
 	}
 }
@@ -47,14 +45,14 @@ func (c *Create) SetTransition(transition *Transitions.Transition) {
 func (c *Create) RunToCurrentTime(currentTime float64) {
 	if c.nextActivationTime <= currentTime {
 		c.CreateNewMarker()
-		c.nextActivationTime = currentTime + c.delay
+		c.nextActivationTime = currentTime + c.GetDelay()
 	}
 	c.currentTime = currentTime
 }
 
 func (c *Create) CreateNewMarker() {
-	c.created++
-	m := c.markerGenerator()
+	c.Created++
+	m := c.markerGenerator(c.currentTime)
 
 	m.SetTimeStart(c.currentTime)
 	c.transition.PushMarkerToNextNode(m)

@@ -1,14 +1,16 @@
 package Marker
 
 type Marker struct {
-	Id        int
-	timeStart float64
+	id        int
+	TimeStart float64
 }
 
-func NewMarker() *Marker {
-	return &Marker{}
+func NewMarker(timeStart float64) *Marker {
+	return &Marker{
+		TimeStart: timeStart,
+	}
 }
 
 func (m *Marker) SetTimeStart(timeStart float64) {
-	m.timeStart = timeStart
+	m.TimeStart = timeStart
 }

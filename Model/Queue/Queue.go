@@ -25,6 +25,16 @@ func (q *Queue) Pop() *Marker.Marker {
 	return element
 }
 
+func (q *Queue) PopBack() *Marker.Marker {
+	if len(q.elements) == 0 {
+		return nil
+	}
+
+	element := q.elements[len(q.elements)-1]
+	q.elements = q.elements[:len(q.elements)-1]
+	return element
+}
+
 func (q *Queue) Size() int {
 	return len(q.elements)
 }
