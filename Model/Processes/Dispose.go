@@ -6,22 +6,26 @@ import (
 )
 
 type Dispose struct {
-	*Elements.BasicElement
+	*Elements.ProcessElement
 	*Statistic.ElementStatistic
 }
 
 func NewDispose() *Dispose {
 	return &Dispose{
-		BasicElement:     Elements.NewBasicElement(),
+		ProcessElement:   Elements.NewProcessElementWithDelay(0),
 		ElementStatistic: Statistic.NewElementStatistic(),
 	}
 }
 
 func (d *Dispose) Finish() {
+	d.ProcessElement.Finish()
 	d.ElementStatistic.AddTotalProceeded()
 }
 
 func (d *Dispose) Start() {
+	d.ElementStatistic.CountTimeBetweenLeft(d.GetCurrentTime())
+	d.ElementStatistic.SetLastTime(d.GetCurrentTime())
+
 	d.Finish()
 }
 

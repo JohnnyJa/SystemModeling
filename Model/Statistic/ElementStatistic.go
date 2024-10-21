@@ -8,8 +8,10 @@ type IStatistic interface {
 }
 
 type ElementStatistic struct {
-	totalProceeded int
-	failures       int
+	totalProceeded  int
+	failures        int
+	timeBetweenLeft float64
+	lastTime        float64
 }
 
 func NewElementStatistic() *ElementStatistic {
@@ -24,10 +26,23 @@ func (s *ElementStatistic) AddFailure() {
 	s.failures++
 }
 
+func (s *ElementStatistic) CountTimeBetweenLeft(currentTime float64) {
+	s.timeBetweenLeft += currentTime - s.lastTime
+	s.lastTime = currentTime
+
+}
+func (s *ElementStatistic) SetLastTime(lastTime float64) {
+	s.lastTime = lastTime
+}
+
 func (s *ElementStatistic) GetFailure() int {
 	return s.failures
 }
 
+func (s *ElementStatistic) GetTotalProceeded() int {
+	return s.totalProceeded
+}
+
 func (s *ElementStatistic) GetResult() string {
-	return fmt.Sprintf("Total proceeded: %d Failures: %d", s.totalProceeded, s.failures)
+	return fmt.Sprintf("Total proceeded: %d Failures: %d \nAverage time between left: %f\n", s.totalProceeded, s.failures, s.timeBetweenLeft/float64(s.totalProceeded))
 }

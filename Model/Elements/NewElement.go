@@ -1,6 +1,8 @@
 package Elements
 
-import "strconv"
+import (
+	"strconv"
+)
 
 var NumOFElements int = 0
 
@@ -8,6 +10,8 @@ type IElement interface {
 	Start()
 	Finish()
 	GetId() int
+
+	GetName() string
 }
 
 type BasicElement struct {

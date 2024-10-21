@@ -1,8 +1,9 @@
 package Conditions
 
 import (
-	"Model/Model/Elements"
+	ModelQueue "Model/Model/Queue"
 	"errors"
+	"math"
 	"math/rand"
 )
 
@@ -55,26 +56,31 @@ func (r *RandomCondition) MakeCondition() int {
 }
 
 type PriorityCondition struct {
-	element Elements.IElement
+	queues []*ModelQueue.Queue
 }
 
-func NewPriorityCondition(element Elements.IElement) *PriorityCondition {
-	return &PriorityCondition{element: element}
+func NewPriorityCondition() *PriorityCondition {
+	return &PriorityCondition{queues: make([]*ModelQueue.Queue, 0)}
 }
 
-//func (p *PriorityCondition) MakeCondition() int {
-//	elements := p.element.GetNextElements()
-//	minQueueIndex := 0
-//	minQueue := math.MaxInt
-//	for i, el := range elements {
-//		if s, ok := el.(*Process); ok {
-//			if s.GetQueueSize() < minQueue {
-//				minQueue = s.GetQueueSize()
-//				minQueueIndex = i
-//			}
-//		} else {
-//			panic("element is not a process")
-//		}
-//	}
-//	return minQueueIndex
-//}
+func (p *PriorityCondition) AddQueue(queue *ModelQueue.Queue) {
+	p.queues = append(p.queues, queue)
+}
+
+func (p *PriorityCondition) SetQueues(queues []*ModelQueue.Queue) {
+	p.queues = queues
+}
+
+func (p *PriorityCondition) MakeCondition() int {
+
+	minQueueIndex := 0
+	minQueue := math.MaxInt
+	for i, q := range p.queues {
+		if q.GetCurrentQueueSize() < minQueue {
+			minQueue = q.GetCurrentQueueSize()
+			minQueueIndex = i
+		}
+	}
+
+	return minQueueIndex
+}

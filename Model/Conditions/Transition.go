@@ -1,12 +1,15 @@
 package Conditions
 
-import "Model/Model/Elements"
+import (
+	"Model/Model/Elements"
+)
 
 type ITransition interface {
-	StartNextElement()
+	StartNextElement(entryTime float64)
 	SetNextElement(Elements.IElement)
 	SetNextElements([]Elements.IElement)
 	SetCondition(ICondition)
+	GetTransition() *Transition
 }
 
 type Transition struct {
@@ -18,6 +21,10 @@ func NewTransition() *Transition {
 	return &Transition{
 		nextElements: make([]Elements.IElement, 0),
 	}
+}
+
+func (t *Transition) GetTransition() *Transition {
+	return t
 }
 
 func (t *Transition) SetNextElement(el Elements.IElement) {

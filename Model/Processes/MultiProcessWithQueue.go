@@ -40,6 +40,7 @@ func (p *MultiProcessWithQueue) MoveToCurrentTime() {
 	}
 
 	p.QueueStatistic.CountMeanQueue(p.GetCurrentQueueSize(), p.processors[0].GetCurrentTime())
+	p.QueueStatistic.SetLastTime(p.processors[0].GetCurrentTime())
 }
 
 func (p *MultiProcessWithQueue) GetLog() string {

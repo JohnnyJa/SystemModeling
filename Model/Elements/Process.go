@@ -92,3 +92,7 @@ func (e *ProcessElement) SetDistributionType(distributionType string) {
 func (e *ProcessElement) GetState() ElementState {
 	return e.state
 }
+
+func (e *ProcessElement) SetState(state ElementState) {
+	e.state = state
+}

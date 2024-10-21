@@ -53,9 +53,9 @@ func (m *Model) PrintLog() {
 }
 
 func (m *Model) PrintResult() {
-	log := ""
+	log := "*********************************************\n"
 	for _, e := range m.list {
-		log += e.GetResult() + "\n"
+		log += "-------------------\n" + e.GetResult() + "\n"
 	}
 	fmt.Println(log)
 }
