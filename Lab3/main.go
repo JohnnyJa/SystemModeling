@@ -6,6 +6,7 @@ import (
 	"Model/Model/Elements"
 	"Model/Model/Interfaces"
 	"Model/Model/Processes"
+	"Model/Model/Statistic"
 	"Model/funRand"
 )
 
@@ -31,8 +32,13 @@ func main() {
 	p1.SetName("Process1")
 	p1.SetDistributionType("exp")
 	p1.SetNextTime(funRand.Norm(1, 0.3))
-	_ = p1.AddToQueue()
-	_ = p1.AddToQueue()
+	m1 := *Statistic.NewMarker(0.0)
+	m2 := *Statistic.NewMarker(0.0)
+	m3 := *Statistic.NewMarker(0.0)
+	m4 := *Statistic.NewMarker(0.0)
+
+	_ = p1.AddToQueue(m1)
+	_ = p1.AddToQueue(m2)
 	p1.SetState(Elements.Busy)
 	p1.SetCondition(Conditions.NewFullRandomCondition(1))
 
@@ -40,8 +46,8 @@ func main() {
 	p2.SetName("Process2")
 	p2.SetDistributionType("exp")
 	p2.SetNextTime(funRand.Norm(1, 0.3))
-	_ = p2.AddToQueue()
-	_ = p2.AddToQueue()
+	_ = p2.AddToQueue(m3)
+	_ = p2.AddToQueue(m4)
 	p2.SetState(Elements.Busy)
 	p2.SetCondition(Conditions.NewFullRandomCondition(1))
 

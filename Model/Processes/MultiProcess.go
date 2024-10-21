@@ -14,6 +14,8 @@ type MultiProcess struct {
 	processors []*Elements.ProcessElement
 	*Statistic.ElementStatistic
 	*Conditions.Transition
+
+	marker Statistic.Marker
 }
 
 func NewMultiProcessWithDelay(numOfProcessors int, delay float64) *MultiProcess {
@@ -30,16 +32,17 @@ func NewMultiProcessWithDelay(numOfProcessors int, delay float64) *MultiProcess 
 	}
 }
 
-func (p *MultiProcess) Start() {
-	if err := p.StartInProcessor(); err != nil {
+func (p *MultiProcess) Start(marker Statistic.Marker) {
+	p.marker = marker
+	if err := p.StartInProcessor(marker); err != nil {
 		p.AddFailure()
 	}
 }
 
-func (p *MultiProcess) StartInProcessor() error {
+func (p *MultiProcess) StartInProcessor(marker Statistic.Marker) error {
 	for _, pr := range p.processors {
 		if pr.GetState() == Elements.Free {
-			pr.Start()
+			pr.Start(marker)
 			return nil
 		}
 	}
@@ -49,7 +52,7 @@ func (p *MultiProcess) StartInProcessor() error {
 
 func (p *MultiProcess) Finish() {
 	p.AddTotalProceeded()
-	p.Transition.StartNextElement()
+	p.Transition.StartNextElement(p.marker)
 }
 
 func (p *MultiProcess) MoveToCurrentTime() {

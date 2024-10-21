@@ -81,15 +81,15 @@ func (m *Model) RebalanceQueues(list []Interfaces.IProcess) {
 	secondQueue := list[2].(*Processes.SingleProcessWithQueue).GetQueue()
 
 	if firstQueue.GetCurrentQueueSize()-secondQueue.GetCurrentQueueSize() >= 2 {
-		firstQueue.RemoveFromQueue()
-		_ = secondQueue.AddToQueue()
+		m := firstQueue.RemoveFromQueue()
+		_ = secondQueue.AddToQueue(m)
 		fmt.Printf("Rebalanced queues: %d %d\n", firstQueue.GetCurrentQueueSize(), secondQueue.GetCurrentQueueSize())
 		rebalance++
 	}
 
 	if secondQueue.GetCurrentQueueSize()-firstQueue.GetCurrentQueueSize() >= 2 {
-		secondQueue.RemoveFromQueue()
-		_ = firstQueue.AddToQueue()
+		m := secondQueue.RemoveFromQueue()
+		_ = firstQueue.AddToQueue(m)
 		fmt.Printf("Rebalanced queues: %d %d\n", firstQueue.GetCurrentQueueSize(), secondQueue.GetCurrentQueueSize())
 		rebalance++
 	}

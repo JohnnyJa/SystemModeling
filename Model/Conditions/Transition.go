@@ -2,10 +2,11 @@ package Conditions
 
 import (
 	"Model/Model/Elements"
+	"Model/Model/Statistic"
 )
 
 type ITransition interface {
-	StartNextElement(entryTime float64)
+	StartNextElement(marker Statistic.Marker)
 	SetNextElement(Elements.IElement)
 	SetNextElements([]Elements.IElement)
 	SetCondition(ICondition)
@@ -35,8 +36,8 @@ func (t *Transition) SetNextElements(elements []Elements.IElement) {
 	t.nextElements = elements
 }
 
-func (t *Transition) StartNextElement() {
-	t.nextElements[t.condition.MakeCondition()].Start()
+func (t *Transition) StartNextElement(marker Statistic.Marker) {
+	t.nextElements[t.condition.MakeCondition()].Start(marker)
 }
 
 func (t *Transition) SetCondition(condition ICondition) {

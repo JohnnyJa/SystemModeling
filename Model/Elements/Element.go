@@ -1,13 +1,14 @@
 package Elements
 
 import (
+	"Model/Model/Statistic"
 	"strconv"
 )
 
 var NumOFElements int = 0
 
 type IElement interface {
-	Start()
+	Start(Statistic.Marker)
 	Finish()
 	GetId() int
 

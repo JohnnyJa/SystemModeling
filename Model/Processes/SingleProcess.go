@@ -21,12 +21,12 @@ func NewSingleProcess(delay float64) *SingleProcess {
 	}
 }
 
-func (p *SingleProcess) Start() {
+func (p *SingleProcess) Start(marker Statistic.Marker) {
 	if p.GetState() == Elements.Busy {
 		p.ElementStatistic.AddFailure()
 		return
 	}
-	p.ProcessElement.Start()
+	p.ProcessElement.Start(marker)
 }
 
 func (p *SingleProcess) Finish() {
@@ -34,7 +34,7 @@ func (p *SingleProcess) Finish() {
 
 	p.ElementStatistic.AddTotalProceeded()
 
-	p.Transition.StartNextElement()
+	p.Transition.StartNextElement(p.GetMarker())
 }
 
 func (p *SingleProcess) GetResult() string {

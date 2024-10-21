@@ -1,6 +1,7 @@
 package Elements
 
 import (
+	"Model/Model/Statistic"
 	"Model/funRand"
 	"fmt"
 	"math"
@@ -19,6 +20,7 @@ type ProcessElement struct {
 	delayDev         float64
 	distributionType string
 	state            ElementState
+	marker           Statistic.Marker
 }
 
 func NewProcessElementWithDelay(delay float64) *ProcessElement {
@@ -61,7 +63,8 @@ func (e *ProcessElement) GetDelay() float64 {
 	return delay
 }
 
-func (e *ProcessElement) Start() {
+func (e *ProcessElement) Start(marker Statistic.Marker) {
+	e.marker = marker
 	e.state = Busy
 	e.nextTime = e.currentTime + e.GetDelay()
 }
@@ -95,4 +98,8 @@ func (e *ProcessElement) GetState() ElementState {
 
 func (e *ProcessElement) SetState(state ElementState) {
 	e.state = state
+}
+
+func (e *ProcessElement) GetMarker() Statistic.Marker {
+	return e.marker
 }

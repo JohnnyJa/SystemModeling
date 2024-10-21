@@ -33,10 +33,10 @@ func (c *Create) Finish() {
 
 	c.SetNextTime(c.GetCurrentTime() + c.GetDelay())
 
-	c.Transition.StartNextElement()
+	c.Transition.StartNextElement(*Statistic2.NewMarker(c.GetCurrentTime()))
 }
 
-func (c *Create) Start() {
+func (c *Create) Start(marker Statistic2.Marker) {
 
 }
 

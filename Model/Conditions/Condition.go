@@ -56,18 +56,18 @@ func (r *RandomCondition) MakeCondition() int {
 }
 
 type PriorityCondition struct {
-	queues []*ModelQueue.Queue
+	queues []*ModelQueue.ModelQueue
 }
 
 func NewPriorityCondition() *PriorityCondition {
-	return &PriorityCondition{queues: make([]*ModelQueue.Queue, 0)}
+	return &PriorityCondition{queues: make([]*ModelQueue.ModelQueue, 0)}
 }
 
-func (p *PriorityCondition) AddQueue(queue *ModelQueue.Queue) {
+func (p *PriorityCondition) AddQueue(queue *ModelQueue.ModelQueue) {
 	p.queues = append(p.queues, queue)
 }
 
-func (p *PriorityCondition) SetQueues(queues []*ModelQueue.Queue) {
+func (p *PriorityCondition) SetQueues(queues []*ModelQueue.ModelQueue) {
 	p.queues = queues
 }
 

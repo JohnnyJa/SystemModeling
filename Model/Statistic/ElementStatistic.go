@@ -12,6 +12,7 @@ type ElementStatistic struct {
 	failures        int
 	timeBetweenLeft float64
 	lastTime        float64
+	clientTime      float64
 }
 
 func NewElementStatistic() *ElementStatistic {
@@ -43,6 +44,15 @@ func (s *ElementStatistic) GetTotalProceeded() int {
 	return s.totalProceeded
 }
 
+func (s *ElementStatistic) GetClientTime() float64 {
+	return s.clientTime
+
+}
+
 func (s *ElementStatistic) GetResult() string {
 	return fmt.Sprintf("Total proceeded: %d Failures: %d \nAverage time between left: %f\n", s.totalProceeded, s.failures, s.timeBetweenLeft/float64(s.totalProceeded))
+}
+
+func (s *ElementStatistic) CountMarkerTime(marker Marker, time float64) {
+	s.clientTime += time - marker.GetTimeStart()
 }

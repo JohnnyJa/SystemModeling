@@ -8,24 +8,24 @@ import (
 )
 
 type SingleProcessWithQueue struct {
-	*ModelQueue.Queue
+	*ModelQueue.ModelQueue
 	*Statistic.QueueStatistic
 	*SingleProcess
 }
 
 func NewSingleProcessWithQueue(delay float64, maxQueueSize int) *SingleProcessWithQueue {
 	return &SingleProcessWithQueue{
-		Queue:          ModelQueue.NewQueue(maxQueueSize),
+		ModelQueue:     ModelQueue.NewQueue(maxQueueSize),
 		QueueStatistic: Statistic.NewQueueStatistic(),
 		SingleProcess:  NewSingleProcess(delay),
 	}
 }
 
-func (p *SingleProcessWithQueue) Start() {
+func (p *SingleProcessWithQueue) Start(marker Statistic.Marker) {
 	if p.GetState() == Elements.Free {
-		p.SingleProcess.Start()
+		p.SingleProcess.Start(marker)
 	} else {
-		if err := p.AddToQueue(); err != nil {
+		if err := p.AddToQueue(marker); err != nil {
 			p.ElementStatistic.AddFailure()
 		}
 	}
@@ -43,8 +43,8 @@ func (p *SingleProcessWithQueue) MoveToCurrentTime() {
 	p.SingleProcess.MoveToCurrentTime()
 	if p.GetCurrentQueueSize() > 0 {
 		if p.SingleProcess.GetState() == Elements.Free {
-			p.RemoveFromQueue()
-			p.SingleProcess.Start()
+			m := p.RemoveFromQueue()
+			p.SingleProcess.Start(m)
 		}
 	}
 
@@ -52,12 +52,12 @@ func (p *SingleProcessWithQueue) MoveToCurrentTime() {
 	p.QueueStatistic.SetLastTime(p.GetCurrentTime())
 }
 
-func (p *SingleProcessWithQueue) GetQueue() *ModelQueue.Queue {
-	return p.Queue
+func (p *SingleProcessWithQueue) GetQueue() *ModelQueue.ModelQueue {
+	return p.ModelQueue
 }
 
 func (p *SingleProcessWithQueue) GetLog() string {
-	return p.ProcessElement.GetLog() + fmt.Sprintf("Queue size: %d\nFailure: %d\n", p.GetCurrentQueueSize(), p.GetFailure())
+	return p.ProcessElement.GetLog() + fmt.Sprintf("ModelQueue size: %d\nFailure: %d\n", p.GetCurrentQueueSize(), p.GetFailure())
 }
 
 func (p *SingleProcessWithQueue) GetResult() string {

@@ -1,31 +1,44 @@
-package ModelQueue
+package Queue
 
-import "errors"
+import (
+	"Model/Model/Statistic"
+	"errors"
+)
 
-type Queue struct {
+type ModelQueue struct {
 	currentQueueSize int
 	maxQueueSize     int
+	markers          []Statistic.Marker
 }
 
-func NewQueue(maxQueueSize int) *Queue {
-	return &Queue{maxQueueSize: maxQueueSize}
+func NewQueue(maxQueueSize int) *ModelQueue {
+	return &ModelQueue{maxQueueSize: maxQueueSize}
 }
 
-func (q *Queue) RemoveFromQueue() {
+func (q *ModelQueue) RemoveFromQueue() Statistic.Marker {
 	if q.currentQueueSize > 0 {
 		q.currentQueueSize--
 	}
+
+	res := q.markers[0]
+	q.markers = q.markers[1:]
+	return res
 }
 
-func (q *Queue) AddToQueue() error {
+func (q *ModelQueue) AddToQueue(marker Statistic.Marker) error {
 	if q.currentQueueSize >= q.maxQueueSize {
 		return errors.New("queue is full")
 	}
 	q.currentQueueSize++
-
+	q.markers = append(q.markers, marker)
 	return nil
 }
 
-func (q *Queue) GetCurrentQueueSize() int {
+func (q *ModelQueue) GetCurrentQueueSize() int {
 	return q.currentQueueSize
+}
+
+func (q *ModelQueue) GetFirst() Statistic.Marker {
+	return q.markers[0]
+
 }
