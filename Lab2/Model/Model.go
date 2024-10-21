@@ -1,61 +1,66 @@
 package Lab2
 
 import (
-	"Model/Model/Interfaces"
+	"Model/Lab2/Interface"
 	"fmt"
-	"math"
 )
 
 type Model struct {
-	list        []Interfaces.IProcess
-	currentTime float64
-	event       int
+	simulationTime float64
+	elements       []Interface.IElement
+	currentTime    float64
 }
 
-func NewModel(elements []Interfaces.IProcess) *Model {
+func NewModel(simulationTime float64, elements []Interface.IElement) *Model {
 	return &Model{
-		list:        elements,
-		currentTime: 0.0,
-		event:       0,
+		simulationTime: simulationTime,
+		elements:       elements,
+		currentTime:    0.0,
 	}
 }
 
-func (m *Model) Simulate(time float64) {
-	for m.currentTime < time {
-		nextTime := math.MaxFloat64
-		for _, e := range m.list {
-			if e.GetNextTime() < nextTime {
-				nextTime = e.GetNextTime()
-				m.event = e.GetId()
-			}
-		}
-
-		m.currentTime = nextTime
-
-		for _, e := range m.list {
-			e.SetCurrentTime(m.currentTime)
-		}
-
-		fmt.Printf("*********************************************\nCurrent Model time = %f\n-------------------\n", m.currentTime)
-
-		for _, e := range m.list {
-			e.MoveToCurrentTime()
-		}
-		m.PrintLog()
+func (m *Model) Simulate() {
+	for m.currentTime < m.simulationTime {
+		m.currentTime = m.FindNextActivationTime()
+		m.RunToCurrentTime(m.currentTime)
+		m.LogResults()
 	}
-	m.PrintResult()
+
+	m.GetResults()
+
 }
 
-func (m *Model) PrintLog() {
-	for _, e := range m.list {
-		fmt.Println(e.GetLog())
+func (m *Model) FindNextActivationTime() float64 {
+	minTime := m.simulationTime
+	for _, element := range m.elements {
+		if element.GetActivationTime() < minTime {
+			minTime = element.GetActivationTime()
+		}
+	}
+	return minTime
+}
+
+func (m *Model) RunToCurrentTime(time float64) {
+	for _, element := range m.elements {
+		element.RunToCurrentTime(time)
 	}
 }
 
-func (m *Model) PrintResult() {
-	log := "*********************************************\n"
-	for _, e := range m.list {
-		log += "-------------------\n" + e.GetResult() + "\n"
+func (m *Model) LogResults() {
+	fmt.Printf("Current time: %f\n", m.FindNextActivationTime())
+
+	for _, element := range m.elements {
+		log := element.(Interface.ILogger).GetLog()
+		fmt.Println("---------------------------")
+		fmt.Println(log)
 	}
-	fmt.Println(log)
+	fmt.Println("******************************************************")
+
+}
+
+func (m *Model) GetResults() {
+	for _, element := range m.elements {
+		log := element.(Interface.ILogger).GetResults()
+		fmt.Println(log)
+	}
 }
