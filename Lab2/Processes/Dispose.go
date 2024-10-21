@@ -33,7 +33,7 @@ func (d *Dispose) RunToCurrentTime(currentTime float64) {
 	d.currentTime = currentTime
 }
 
-func (d *Dispose) TakeMarker(marker *Marker.Marker) {
+func (d *Dispose) TakeMarker(*Marker.Marker) {
 	d.disposed++
 }
 

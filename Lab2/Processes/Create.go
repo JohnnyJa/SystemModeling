@@ -60,7 +60,7 @@ func (c *Create) CreateNewMarker() {
 	c.transition.PushMarkerToNextNode(m)
 }
 
-func (c *Create) TakeMarker(marker *Marker.Marker) {
+func (c *Create) TakeMarker(*Marker.Marker) {
 	// do nothing
 }
 
