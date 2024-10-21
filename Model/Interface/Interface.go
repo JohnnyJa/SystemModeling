@@ -1,6 +1,8 @@
 package Interface
 
-import "Model/Lab2/Marker"
+import (
+	"Model/Model/Marker"
+)
 
 type ILogger interface {
 	GetLog() string

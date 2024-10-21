@@ -1,7 +1,7 @@
 package Lab2
 
 import (
-	"Model/Lab2/Interface"
+	"Model/Model/Interface"
 	"fmt"
 )
 

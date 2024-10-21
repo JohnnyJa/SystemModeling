@@ -1,8 +1,8 @@
 package Transitions
 
 import (
-	"Model/Lab2/Interface"
-	"Model/Lab2/Marker"
+	"Model/Model/Interface"
+	"Model/Model/Marker"
 )
 
 type Transition struct {

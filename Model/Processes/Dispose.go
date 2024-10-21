@@ -1,7 +1,7 @@
 package Processes
 
 import (
-	"Model/Lab2/Marker"
+	"Model/Model/Marker"
 	"fmt"
 	"math"
 )

@@ -1,6 +1,8 @@
 package Queue
 
-import "Model/Lab2/Marker"
+import (
+	"Model/Model/Marker"
+)
 
 type Queue struct {
 	elements []*Marker.Marker

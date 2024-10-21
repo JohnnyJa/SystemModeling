@@ -1,20 +1,20 @@
 package main
 
 import (
-	"Model/Lab2/Interface"
 	Lab2 "Model/Lab2/Model"
-	"Model/Lab2/Processes"
-	"Model/Lab2/Transitions"
+	"Model/Model/Interface"
+	Processes2 "Model/Model/Processes"
+	"Model/Model/Transitions"
 	"math/rand"
 )
 
 func main() {
-	c := Processes.NewCreate(1, "Create", 0.5)
-	p1 := Processes.NewProcess(2, "Process", 0, 1, 2)
-	p2 := Processes.NewProcess(2, "Process", 0, 2, 1)
-	p3 := Processes.NewProcess(2, "Process", 0, 3, 1)
+	c := Processes2.NewCreate(1, "Create", 0.5)
+	p1 := Processes2.NewProcess(2, "Process", 0, 1, 2)
+	p2 := Processes2.NewProcess(2, "Process", 0, 2, 1)
+	p3 := Processes2.NewProcess(2, "Process", 0, 3, 1)
 
-	d := Processes.NewDispose(3, "Dispose")
+	d := Processes2.NewDispose(3, "Dispose")
 
 	c.SetTransition(Transitions.NewTransition([]Interface.IElement{p1}))
 	p1.SetTransition(Transitions.NewTransition([]Interface.IElement{p2}))

@@ -1,9 +1,9 @@
 package Processes
 
 import (
-	"Model/Lab2/Marker"
-	"Model/Lab2/Queue"
-	"Model/Lab2/Transitions"
+	"Model/Model/Marker"
+	"Model/Model/Queue"
+	"Model/Model/Transitions"
 	"fmt"
 	"math"
 )
