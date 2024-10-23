@@ -21,7 +21,7 @@ type Create struct {
 
 	transition *Transitions.Transition
 
-	markerGenerator func(float64) *Marker.Marker
+	MarkerGenerator func(float64) *Marker.Marker
 }
 
 func NewCreate(id int, name string) *Create {
@@ -32,7 +32,7 @@ func NewCreate(id int, name string) *Create {
 			currentTime:        0,
 			nextActivationTime: 0,
 		},
-		markerGenerator: func(time float64) *Marker.Marker {
+		MarkerGenerator: func(time float64) *Marker.Marker {
 			return Marker.NewMarker(time)
 		},
 	}
@@ -45,14 +45,14 @@ func (c *Create) SetTransition(transition *Transitions.Transition) {
 func (c *Create) RunToCurrentTime(currentTime float64) {
 	if c.nextActivationTime <= currentTime {
 		c.CreateNewMarker()
-		c.nextActivationTime = currentTime + c.GetDelay()
+		c.nextActivationTime = currentTime + c.GetDelay(&Marker.Marker{})
 	}
 	c.currentTime = currentTime
 }
 
 func (c *Create) CreateNewMarker() {
 	c.Created++
-	m := c.markerGenerator(c.currentTime)
+	m := c.MarkerGenerator(c.currentTime)
 
 	m.SetTimeStart(c.currentTime)
 	c.transition.PushMarkerToNextNode(m)

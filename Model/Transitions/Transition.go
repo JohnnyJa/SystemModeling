@@ -7,23 +7,23 @@ import (
 
 type Transition struct {
 	nextElements []Interface.IElement
-	condition    func() int
+	condition    func(marker Marker.Marker) int
 }
 
 func NewTransition(elements []Interface.IElement) *Transition {
 	return &Transition{
 		nextElements: elements,
-		condition: func() int {
+		condition: func(Marker.Marker) int {
 			return 0
 		},
 	}
 }
 
-func (t *Transition) SetCondition(condition func() int) {
+func (t *Transition) SetCondition(condition func(marker Marker.Marker) int) {
 	t.condition = condition
 }
 
 func (t *Transition) PushMarkerToNextNode(marker *Marker.Marker) {
-	nextElementIndex := t.condition()
+	nextElementIndex := t.condition(*marker)
 	t.nextElements[nextElementIndex].TakeMarker(marker)
 }

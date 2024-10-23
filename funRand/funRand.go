@@ -25,3 +25,11 @@ func Unif(timeMin float64, timeMax float64) float64 {
 func Norm(timeMean float64, timeDeviation float64) float64 {
 	return timeMean + timeDeviation*(rand.NormFloat64())
 }
+
+func Erlang(lambda float64, k float64) float64 {
+	sum := 0.0
+	for i := 0.0; i < k; i++ {
+		sum += math.Log(rand.Float64())
+	}
+	return (-sum / lambda)
+}

@@ -2,6 +2,7 @@ package Queue
 
 import (
 	"Model/Model/Marker"
+	"sort"
 )
 
 type Queue struct {
@@ -44,4 +45,14 @@ func (q *Queue) Head() *Marker.Marker {
 		return nil
 	}
 	return q.elements[0]
+}
+
+func (q *Queue) OrderQueue(criteria func(*Marker.Marker, *Marker.Marker) bool) {
+	if len(q.elements) == 0 {
+		return
+	}
+
+	sort.Slice(q.elements, func(i, j int) bool {
+		return criteria(q.elements[i], q.elements[j])
+	})
 }

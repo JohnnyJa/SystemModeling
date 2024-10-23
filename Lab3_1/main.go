@@ -18,11 +18,12 @@ func main() {
 	q1 := p1.GetQueue()
 	q2 := p2.GetQueue()
 
-	c.SetDelay(0.5, 0)
-	c.SetDistribution(Processes2.Exp)
+	c.GetDelay = func(*Marker.Marker) float64 {
+		return funRand.Exp(0.5)
+	}
 
 	t := Transitions.NewTransition([]Interface.IElement{p1, p2})
-	t.SetCondition(func() int {
+	t.SetCondition(func(Marker.Marker) int {
 		if q1.Size() > q2.Size() {
 			return 1
 		}
@@ -32,8 +33,9 @@ func main() {
 	c.SetTransition(t)
 	c.SetNextActivationTime(0.1)
 
-	p1.SetDelay(0.3, 0)
-	p1.SetDistribution(Processes2.Exp)
+	p1.GetDelay = func(*Marker.Marker) float64 {
+		return funRand.Exp(0.3)
+	}
 	p1.SetTransition(Transitions.NewTransition([]Interface.IElement{d}))
 
 	m1 := Marker.NewMarker(0.0)
@@ -43,8 +45,10 @@ func main() {
 
 	p1.SetNextActivationTime(funRand.Norm(1, 0.3))
 
-	p2.SetDelay(0.3, 0)
-	p2.SetDistribution(Processes2.Exp)
+	p2.GetDelay = func(*Marker.Marker) float64 {
+		return funRand.Exp(0.3)
+	}
+
 	p2.SetTransition(Transitions.NewTransition([]Interface.IElement{d}))
 
 	m3 := Marker.NewMarker(0.0)

@@ -1,7 +1,7 @@
 package Processes
 
 import (
-	"Model/funRand"
+	"Model/Model/Marker"
 	"fmt"
 )
 
@@ -23,6 +23,8 @@ type BaseElement struct {
 	distributionType   Distribution
 	delayMean          float64
 	delayDev           float64
+
+	GetDelay func(marker *Marker.Marker) float64
 }
 
 func (e *BaseElement) GetActivationTime() float64 {
@@ -40,24 +42,6 @@ func (e *BaseElement) SetDistribution(distribution Distribution) {
 func (e *BaseElement) SetDelay(delayMean float64, delayDev float64) {
 	e.delayDev = delayDev
 	e.delayMean = delayMean
-}
-
-func (e *BaseElement) GetDelay() float64 {
-	delay := e.delayMean
-	switch e.distributionType {
-	case None:
-		delay = e.delayMean
-	case Exp:
-		delay = funRand.Exp(e.delayMean)
-	case Unif:
-		delay = funRand.Unif(e.delayMean, e.delayDev)
-	case Norm:
-		delay = funRand.Norm(e.delayMean, e.delayDev)
-	default:
-		delay = e.delayMean
-	}
-
-	return delay
 }
 
 func (e *BaseElement) SetNextActivationTime(time float64) {

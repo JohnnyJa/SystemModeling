@@ -37,8 +37,10 @@ type ProcessStatistic struct {
 	FailureCount int
 	meanLoad     float64
 	meanQueue    float64
+	enterDelay   float64
 
-	lastTime float64
+	lastTime      float64
+	lastTimeEnter float64
 }
 
 func (p *ProcessStatistic) SetMeanLoad(state int, currentTime float64) {
@@ -62,17 +64,25 @@ type Process struct {
 	maxQueueSize   int
 	numOfProcesses int
 	processors     []*Processor
+
+	ChangeMarker func(marker *Marker.Marker)
 }
 
 func NewProcess(id int, name string, maxQueueSize int, numOfProcesses int) *Process {
-	processors := make([]*Processor, numOfProcesses)
+	var processors []*Processor
+	if numOfProcesses == -1 {
+		processors = make([]*Processor, 0)
 
-	for i := range processors {
-		processors[i] = &Processor{
-			markerInProcess:    nil,
-			nextActivationTime: math.MaxFloat64,
-			state:              Free,
-			currentTime:        0,
+	} else {
+		processors = make([]*Processor, numOfProcesses)
+
+		for i := range processors {
+			processors[i] = &Processor{
+				markerInProcess:    nil,
+				nextActivationTime: math.MaxFloat64,
+				state:              Free,
+				currentTime:        0,
+			}
 		}
 	}
 
@@ -87,10 +97,34 @@ func NewProcess(id int, name string, maxQueueSize int, numOfProcesses int) *Proc
 		maxQueueSize:   maxQueueSize,
 		numOfProcesses: numOfProcesses,
 		processors:     processors,
+		ChangeMarker: func(marker *Marker.Marker) {
+			// do nothing
+		},
 	}
 }
 
 func (p *Process) RunToCurrentTime(currentTime float64) {
+	p.currentTime = currentTime
+	if p.numOfProcesses == -1 {
+		toDelete := make([]int, 0)
+		for i, pr := range p.processors {
+			if pr.state == Busy && pr.nextActivationTime <= currentTime {
+				pr.FinishProcess(p.transition)
+				p.totalCount++
+				toDelete = append(toDelete, i)
+			}
+			pr.currentTime = currentTime
+		}
+
+		for i, j := 0, len(toDelete)-1; i < j; i, j = i+1, j-1 {
+			toDelete[i], toDelete[j] = toDelete[j], toDelete[i]
+		}
+
+		for _, i := range toDelete {
+			p.processors = append(p.processors[:i], p.processors[i+1:]...)
+		}
+		return
+	}
 
 	for _, pr := range p.processors {
 		if pr.state == Busy && pr.nextActivationTime <= currentTime {
@@ -99,7 +133,8 @@ func (p *Process) RunToCurrentTime(currentTime float64) {
 
 			if p.queue.Size() > 0 {
 				marker := p.queue.Pop()
-				pr.ProcessMarker(marker, p.GetDelay())
+				pr.ProcessMarker(marker, p.GetDelay(marker))
+				p.ChangeMarker(marker)
 			} else {
 				pr.state = Free
 				pr.nextActivationTime = math.MaxFloat64
@@ -109,16 +144,29 @@ func (p *Process) RunToCurrentTime(currentTime float64) {
 
 		pr.currentTime = currentTime
 	}
-
 	p.DoStatistics(currentTime)
 }
 
 func (p *Process) TakeMarker(marker *Marker.Marker) {
+	p.enterDelay += p.currentTime - p.lastTimeEnter
+	p.lastTimeEnter = p.currentTime
+
+	if p.numOfProcesses == -1 {
+		p.processors = append(p.processors, &Processor{
+			markerInProcess:    marker,
+			nextActivationTime: p.currentTime + p.GetDelay(marker),
+			state:              Busy,
+			currentTime:        p.currentTime,
+		})
+
+		return
+	}
 
 	wasFree := false
 	for _, processor := range p.processors {
 		if processor.state == Free {
-			processor.ProcessMarker(marker, p.GetDelay())
+			processor.ProcessMarker(marker, p.GetDelay(marker))
+			p.ChangeMarker(marker)
 			wasFree = true
 			break
 		}
@@ -151,10 +199,11 @@ func (p *Process) GetLog() string {
 }
 
 func (p *Process) GetResults() string {
-	return fmt.Sprintf("Element name %s\nStats:\n Mean load: %f\n Mean queue: %f\n",
+	return fmt.Sprintf("Element name %s\nStats:\n Mean load: %f\n Mean queue: %f\nEnter delay: %f",
 		p.Name,
-		p.GetMeanLoad(p.processors[0].currentTime),
-		p.meanQueue/p.processors[0].currentTime)
+		p.GetMeanLoad(p.currentTime),
+		p.meanQueue/p.currentTime,
+		p.enterDelay/float64(p.totalCount))
 }
 
 func (p *Process) DoStatistics(time float64) {
